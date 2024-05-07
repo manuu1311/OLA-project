@@ -1,5 +1,4 @@
 import numpy as np
-import matplotlib.pyplot as plt
 
 class UCB1Agent:
     def __init__(self, K, T, range=1):

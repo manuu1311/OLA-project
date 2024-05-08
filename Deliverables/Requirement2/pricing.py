@@ -1,8 +1,8 @@
 import numpy as np
 
-class UCB1Agent:
+class UCB1PricingAgent:
     def __init__(self, K, T, range=1):
-        self.K = K
+        self.K = int(1/T**(-0.33))
         self.T = T
         self.range = range
         self.a_t = None

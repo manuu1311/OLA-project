@@ -16,6 +16,5 @@ class MultiplicativePacingAgent:
         return self.valuation/(self.lmbd+1)
     
     def update(self, f_t, c_t):
-        self.lmbd = np.clip(self.lmbd-self.eta*(self.rho-c_t), 
-                            a_min=0, a_max=1/self.rho)
+        self.lmbd = np.clip(self.lmbd-self.eta*(self.rho-c_t), a_min=0, a_max=1/self.rho)
         self.budget -= c_t

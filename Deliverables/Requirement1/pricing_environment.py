@@ -1,6 +1,6 @@
 import numpy as np
 class PricingEnvironment:
-    def __init__(self, norm_distribution, cost,num_cust):
+    def __init__(self, norm_distribution, cost):
         self.norm_distribution=norm_distribution
         self.cost = cost
 

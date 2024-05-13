@@ -5,8 +5,9 @@ class PricingEnvironment():
         self.conversion_probability = conversion_probability
         self.cost = cost
 
-    def round(self, p_t, n_t):
-        d_t = np.random.binomial(n_t, self.conversion_probability(p_t))
+    def round(self, p_t, n_t, day):
+        d_t = np.random.binomial(n_t, self.conversion_probability[day](p_t))
         r_t = (p_t - self.cost)*d_t
         return d_t, r_t
+    
     

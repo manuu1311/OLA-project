@@ -10,4 +10,13 @@ class PricingEnvironment():
         r_t = (p_t - self.cost)*d_t
         return d_t, r_t
     
+class AdversarialExpertEnvironment():
+    def __init__(self, loss_sequence):
+        self.loss_sequence = loss_sequence
+        self.t = 0
+
+    def round(self): # we do not need to receive a specific arm
+        l_t = self.loss_sequence[self.t, :] # we return the whole loss vector perché sono in un expert setting e non in bandit
+        self.t+=1 
+        return l_t
     

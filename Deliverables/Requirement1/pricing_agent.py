@@ -72,7 +72,5 @@ class GPUCBAgent:
     
     def update(self, r_t):
         self.N_pulls[self.a_t] += 1
-        self.action_hist = np.append(self.action_hist, self.arms[self.a_t])
-        self.reward_hist = np.append(self.reward_hist, r_t)
         self.gp = self.gp.fit(self.arms[self.a_t], r_t)
         self.t += 1

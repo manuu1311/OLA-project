@@ -6,5 +6,5 @@ class PricingEnvironment:
 
     def round(self, p_t,num_cust):
         d_t = np.random.binomial(num_cust,self.norm_distribution(p_t))
-        r_t = (p_t - self.cost)*d_t
+        r_t = (p_t)*d_t
         return d_t, r_t

@@ -50,10 +50,11 @@ class RBFGaussianProcess:
     
 
 class GPUCBAgent:
-    def __init__(self, T, discretization=100):
+    def __init__(self, T,min_price=0.0,max_price=1.0, scale=2.0,discretization=100):
         self.T = T
-        self.arms = np.linspace(0, 1, discretization)
-        self.gp = RBFGaussianProcess(scale=2).fit()
+        self.arms = np.linspace(10, 20, discretization)
+        self.converted_arms=np.linspace(min_price,max_price,discretization)
+        self.gp = RBFGaussianProcess(scale=scale).fit()
         self.a_t = None
         self.action_hist = np.array([])
         self.reward_hist = np.array([])
@@ -68,7 +69,7 @@ class GPUCBAgent:
         self.mu_t, self.sigma_t = self.gp.predict(self.arms) 
         ucbs = self.mu_t + self.beta(self.t) * self.sigma_t
         self.a_t = np.argmax(ucbs)
-        return self.arms[self.a_t]
+        return self.converted_arms[self.a_t]
     
     def update(self, r_t):
         self.N_pulls[self.a_t] += 1

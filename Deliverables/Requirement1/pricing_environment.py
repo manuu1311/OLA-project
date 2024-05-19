@@ -8,3 +8,8 @@ class PricingEnvironment:
         d_t = np.random.binomial(num_cust,self.norm_distribution(p_t))
         r_t = (p_t-self.cost)*d_t
         return d_t, r_t
+
+def get_expected_profit(curve,cost,prices):
+    num=curve(prices)
+    profit=num*(prices-cost)
+    return np.max(profit)

@@ -35,7 +35,7 @@ class ucblike:
         self.t=0
         self.gamma=0
 
-    def pull_arm(self):
+    def bid(self):
         idxs=np.where(self.pulled==0)[0]
         if self.B<1:
             self.gamma=0
@@ -58,13 +58,14 @@ class ucblike:
 
 class gpucblike:
     #B: budget, T: steps, lr: learning rate
-    def __init__(self,B,T,lr,my_val,discretization=100):
-        self.prices=np.linspace(0,my_val,discretization)
+    def __init__(self,B,T,lr,my_val,discretization=100,scale=2.0):
+        self.prices=np.linspace(10,20,discretization)
+        self.act_prices=np.linspace(0,my_val,discretization)
         self.B=B
         self.T=T
         self.lr=lr
-        self.f_t=RBFGaussianProcess().fit()
-        self.c_t=RBFGaussianProcess().fit()
+        self.f_t=RBFGaussianProcess(scale=scale).fit()
+        self.c_t=RBFGaussianProcess(scale=scale).fit()
         self.mu_f = np.zeros(discretization)
         self.sigma_f = np.zeros(discretization)
         self.mu_c = np.zeros(discretization)
@@ -73,7 +74,7 @@ class gpucblike:
         self.t=0
         self.gamma=0
 
-    def pull_arm(self):
+    def bid(self):
         if self.B<1:
             self.gamma=0
         else:
@@ -83,7 +84,7 @@ class gpucblike:
             c_ucbs = self.mu_c-np.sqrt(2*np.log(self.T)*self.sigma_c)
             f_ucbs[c_ucbs>self.rho]=0
             self.gamma=np.argmax(f_ucbs)
-        return self.prices[self.gamma]
+        return self.act_prices[self.gamma]
     
     def update(self,f,c):
         self.t+=1

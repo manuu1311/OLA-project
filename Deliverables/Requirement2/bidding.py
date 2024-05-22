@@ -3,6 +3,7 @@ import numpy as np
 class HedgeAgent:
     def __init__(self, K, learning_rate):
         self.K = K
+        self.N_pulls = np.zeros(K)
         self.learning_rate = learning_rate
         self.weights = np.ones(K)
         self.x_t = np.ones(K)/K
@@ -16,6 +17,7 @@ class HedgeAgent:
     
     def update(self, l_t):
         self.weights *= np.exp(-self.learning_rate*l_t)
+        self.N_pulls[self.a_t] += 1
         self.t += 1
     
 class FFMultiplicativePacingAgent:

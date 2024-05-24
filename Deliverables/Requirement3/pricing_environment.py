@@ -25,7 +25,7 @@ class PricingEnvironment:
             if self.t>=self.indexes[self.i]:
                 self.i+=1
                 if debug:
-                    print('Switching to distribution number',self.i)
+                    print('Switching to distribution number',self.i, 'in iteration',self.t)
                     [500,1000,1500,2000]
         return d_t, r_t
 

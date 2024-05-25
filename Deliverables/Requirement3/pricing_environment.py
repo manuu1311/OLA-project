@@ -29,3 +29,18 @@ class PricingEnvironment:
                     [500,1000,1500,2000]
         return d_t, r_t
 
+
+class Two_items_PricingEnvironment:
+    def __init__(self, dem_curve1,dem_curve2,c1,c2):
+        self.dem1=dem_curve1
+        self.dem2=dem_curve2
+        self.c1=c1
+        self.c2=c2
+        
+
+    def round(self,p1,p2,num_cust):
+        n1=np.random.binomial(num_cust,self.dem1(p1,p2))
+        profit_1=n1*(p1-self.c1)
+        n2=np.random.binomial(num_cust,self.dem2(p1,p2))
+        profit_2=n2*self.c2
+        return n1,n2,profit_1,profit_2

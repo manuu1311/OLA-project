@@ -99,19 +99,32 @@ class GPUCB:
     def __init__(self, T, prices1,prices2, scale=0.1):
         kernel = RBF(length_scale=scale)
         self.gp = GaussianProcessRegressor(kernel=kernel)
-        x,y=np.meshgrid(prices1,prices2)
+        fake_pr1=np.linspace(10,20,100)
+        fake_pr2=np.linspace(10,20,100)
+        x,y=np.meshgrid(fake_pr1,fake_pr2)
         self.arms = np.column_stack((x.reshape(-1), y.reshape(-1)))
+        x,y=np.meshgrid(prices1,prices2)
+        self.actual_arms = np.column_stack((x.reshape(-1), y.reshape(-1)))
+        #self.arms = np.column_stack((x.reshape(-1), y.reshape(-1)))
         self.gamma = lambda t: np.log(t+1)**2 
         self.beta = lambda t: 1 + 0.5*np.sqrt(2 * (self.gamma(t) + 1 + np.log(T)))
         self.t=0
         self.T=T
+        self.x_hist=np.array([])
+        self.y_hist=np.array([])
             
     def pull_arm(self):
         self.mu_t, self.sigma_t = self.gp.predict(self.arms,return_std=True) 
         ucbs = self.mu_t + self.beta(self.t) * self.sigma_t
         self.a_t = np.argmax(ucbs)
-        return self.arms[self.a_t]
+        return self.actual_arms[self.a_t]
     
     def update(self, r_t):
-        self.gp = self.gp.fit(self.arms[self.a_t][:,None].T, np.array([r_t]).reshape(-1,1))
         self.t += 1
+        self.x_hist=np.append(self.x_hist,self.arms[self.a_t].T)
+        self.y_hist=np.append(self.y_hist,r_t)
+        self.gp = self.gp.fit(self.x_hist.reshape(self.t,2), self.y_hist)
+
+    def get_predictions(self):
+        preds=self.gp.predict(self.arms,return_std=True)
+        return preds[0].reshape(100,100),preds[1].reshape(100,100)

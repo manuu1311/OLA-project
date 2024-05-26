@@ -42,5 +42,5 @@ class Two_items_PricingEnvironment:
         n1=np.random.binomial(num_cust,self.dem1(p1,p2))
         profit_1=n1*(p1-self.c1)
         n2=np.random.binomial(num_cust,self.dem2(p1,p2))
-        profit_2=n2*self.c2
+        profit_2=n2*(p2-self.c2)
         return n1,n2,profit_1,profit_2

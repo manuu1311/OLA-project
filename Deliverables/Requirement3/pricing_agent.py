@@ -1,6 +1,6 @@
 import numpy as np
 from sklearn.gaussian_process import GaussianProcessRegressor
-from sklearn.gaussian_process.kernels import RBF
+from sklearn.gaussian_process.kernels import RBF, ConstantKernel as C, WhiteKernel as W
 
 class SWUCBAgent:
     def __init__(self, K, T, W, prices, range=1):
@@ -97,8 +97,9 @@ class CUSUMUCBAgent:
 
 class GPUCB:
     def __init__(self, T, prices1,prices2, scale=0.1):
-        kernel = RBF(length_scale=scale)
-        self.gp = GaussianProcessRegressor(kernel=kernel)
+        alpha = 1e-5 # 10 in prof code
+        kernel = C(1.0, (1e-3, 1e3))*RBF(1.0, (1e-3, 1e3)) + W(1.0)
+        self.gp = GaussianProcessRegressor(kernel=kernel, alpha=alpha, normalize_y=True, n_restarts_optimizer=2) 
         fake_pr1=np.linspace(10,20,100)
         fake_pr2=np.linspace(10,20,100)
         x,y=np.meshgrid(fake_pr1,fake_pr2)

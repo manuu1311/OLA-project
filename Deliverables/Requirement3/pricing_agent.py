@@ -33,13 +33,12 @@ class SWUCBAgent:
         self.t += 1
 
 class CUSUMUCBAgent:
-    def __init__(self, K, T, M, h, prices, alpha=0.99, range=1):
+    def __init__(self, K, T, M, h, prices, range=1):
         self.K = K
         self.T = T
         self.M = M
         self.h = h
         self.prices=prices
-        self.alpha=alpha
         self.range = range
         self.a_t = None
         self.reset_times = np.zeros(K)
@@ -59,11 +58,8 @@ class CUSUMUCBAgent:
                     self.a_t = a
                     break
         else:
-            if np.random.random() <= 1-self.alpha:
-                ucbs = self.average_rewards + self.range*np.sqrt(np.log(self.n_t)/self.N_pulls)
-                self.a_t = np.argmax(ucbs)
-            else:
-                self.a_t = np.random.choice(np.arange(self.K)) # extra exploration
+            ucbs = self.average_rewards + self.range*np.sqrt(np.log(self.n_t)/self.N_pulls)
+            self.a_t = np.argmax(ucbs)
         return self.prices[self.a_t]
     
     def update(self, r_t):

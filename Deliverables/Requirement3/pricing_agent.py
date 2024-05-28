@@ -20,7 +20,7 @@ class SWUCBAgent:
         else:
             n_pulls_last_w = self.W - np.isnan(self.cache).sum(axis=0)
             avg_last_w = np.nanmean(self.cache, axis=0)
-            ucbs = avg_last_w + self.range*np.sqrt(2*np.log(self.W)/n_pulls_last_w)
+            ucbs = avg_last_w + 0.2*self.range*np.sqrt(2*np.log(self.W)/n_pulls_last_w)
             self.a_t = np.argmax(ucbs)
         return self.prices[self.a_t]
     
@@ -31,7 +31,6 @@ class SWUCBAgent:
         new_samples[self.a_t] = r_t
         self.cache = np.vstack((self.cache, new_samples)) # add new observation
         self.t += 1
-
 
 class CUSUMUCBAgent:
     def __init__(self, K, T, M, h, prices, alpha=0.99, range=1):

@@ -42,7 +42,7 @@ class ucblike:
         elif idxs.shape[0]!=0:
             self.gamma=idxs[0]
         else:
-            f_ucbs = self.f_t/self.pulled+np.sqrt(2*np.log(self.T)/self.pulled)
+            f_ucbs = self.f_t/self.pulled+0.2*np.sqrt(2*np.log(self.T)/self.pulled)
             c_ucbs = self.c_t/self.pulled-np.sqrt(2*np.log(self.T)/self.pulled)
             f_ucbs[c_ucbs>self.rho]=0
             self.gamma=np.argmax(f_ucbs)
@@ -80,7 +80,7 @@ class gpucblike:
         else:
             self.mu_c,self.sigma_c=self.c_t.predict(self.prices)
             self.mu_f,self.sigma_f=self.f_t.predict(self.prices)
-            f_ucbs = self.mu_f+np.sqrt(2*np.log(self.T)*self.sigma_f)
+            f_ucbs = self.mu_f+0.2*np.sqrt(2*np.log(self.T)*self.sigma_f)
             c_ucbs = self.mu_c-np.sqrt(2*np.log(self.T)*self.sigma_c)
             f_ucbs[c_ucbs>self.rho]=0
             self.gamma=np.argmax(f_ucbs)

@@ -23,7 +23,7 @@ class MultiplicativePacingAgent:
 ##UCB-like approach
 class ucblike:
     #B: budget, T: steps, lr: learning rate, my_val: item value
-    def __init__(self,B,T,lr,my_val,discretization=100,range=0.2):
+    def __init__(self,B,T,lr,my_val,discretization=100,range=0.1):
         self.prices=np.linspace(0,my_val,discretization)
         self.B=B
         self.T=T
@@ -43,10 +43,11 @@ class ucblike:
         elif idxs.shape[0]!=0:
             self.gamma=idxs[0]
         else:
-            f_ucbs = self.f_t/self.pulled+range*np.sqrt(2*np.log(self.T)/self.pulled)
+            f_ucbs = self.f_t/self.pulled+self.range*np.sqrt(2*np.log(self.T)/self.pulled)
             c_ucbs = self.c_t/self.pulled-np.sqrt(2*np.log(self.T)/self.pulled)
-            f_ucbs[c_ucbs>self.rho]=0
+            f_ucbs[c_ucbs>self.rho]=-np.inf
             self.gamma=np.argmax(f_ucbs)
+            print(f_ucbs,self.gamma)
         return self.prices[self.gamma]
     
     def update(self,f,c):

@@ -6,7 +6,7 @@ class Bids:
     def __init__(self, n_bids):
         self.n_bids = n_bids
 
-def complex_variation(time, trend_factor=0.01, amplitude=0.2, frequency=2*np.pi/10, threshold=0.5):
+def complex_variation(time, trend_factor=0.1, amplitude=0.2, frequency=2*np.pi/10, threshold=0.5):
   # Linear trend component
   trend = 1 + trend_factor * time
 
@@ -33,7 +33,7 @@ def generate_bids(N, time_variation_factor, current_time):
     base_bid = np.random.uniform(0, 1)
 
     # Apply time variation
-    time_variation = complex_variation(current_time, trend_factor=0.01, amplitude=time_variation_factor, frequency=2*np.pi/10, threshold=0.5)
+    time_variation = complex_variation(current_time, trend_factor=0.1, amplitude=time_variation_factor, frequency=2*np.pi/5, threshold=0.5)
     modified_bid = base_bid * time_variation
 
     # Clip the bid to the range (0, 1)
@@ -41,4 +41,4 @@ def generate_bids(N, time_variation_factor, current_time):
 
     bids.append(bid)
 
-  return bids
+  return np.array(bids)

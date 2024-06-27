@@ -19,7 +19,7 @@ class AdversarialExpertEnvironment():
         self.t = 0
 
     def round(self): # we do not need to receive a specific arm
-        l_t = self.loss_sequence[self.t, :] # we return the whole loss vector perché sono in un expert setting e non in bandit
+        l_t = self.loss_sequence[self.t, :]
         self.t+=1 
         return l_t
     

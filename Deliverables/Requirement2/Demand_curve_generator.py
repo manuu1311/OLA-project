@@ -7,8 +7,9 @@ class Demand_curve_generator():
     # this method returns the probability of sale for a general product in function of product's price.
     # The output curve varies based on the steep parameter randomly generated when the function is invoked. 
     def generate_demand(min_price, max_price , curve_steep):
-
-        conversion_probability = lambda price: np.clip(np.exp(-((np.clip(price, 0, 1) - min_price) / (max_price - min_price)) * curve_steep), 0, 1)
-
+        if np.random.choice([True, False]):
+            conversion_probability = lambda price: np.clip(np.exp(-((np.clip(price, 0, 1) - min_price) / (max_price - min_price)) * curve_steep), 0, 1)
+        else:
+            conversion_probability = lambda price: 1 - price**curve_steep
         return conversion_probability
                 

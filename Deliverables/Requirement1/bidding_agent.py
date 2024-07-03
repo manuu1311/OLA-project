@@ -1,5 +1,6 @@
 import numpy as np
 from pricing_agent import RBFGaussianProcess
+from scipy.optimize import linprog
 
 class MultiplicativePacingAgent:
     def __init__(self, valuation, budget, T, eta):
@@ -33,64 +34,32 @@ class ucblike:
         self.c_t=np.zeros(discretization)
         self.rho=self.B/self.T
         self.t=0
-        self.gamma=0
         self.range=range
+        self.i=0
+        self.discretization=discretization
 
     def bid(self):
         idxs=np.where(self.pulled==0)[0]
         if self.B<1:
-            self.gamma=0
+            self.i=0
         elif idxs.shape[0]!=0:
-            self.gamma=idxs[0]
+            self.i=idxs[0]
         else:
             f_ucbs = self.f_t/self.pulled+self.range*np.sqrt(2*np.log(self.T)/self.pulled)
-            c_ucbs = self.c_t/self.pulled-np.sqrt(2*np.log(self.T)/self.pulled)
-            f_ucbs[c_ucbs>self.rho]=-np.inf
-            self.gamma=np.argmax(f_ucbs)
-            print(f_ucbs,self.gamma)
-        return self.prices[self.gamma]
+            c_ucbs = self.c_t/self.pulled-self.range*np.sqrt(2*np.log(self.T)/self.pulled)
+            c=-f_ucbs
+            A_ub=[c_ucbs]
+            b_ub=[self.rho]
+            A_eq=[np.ones(self.discretization)]
+            b_eq=[1]
+            gamma=linprog(c,A_ub,b_ub,A_eq,b_eq).x
+            self.i=np.random.choice(self.discretization,p=gamma)    
+        return self.prices[self.i]
     
     def update(self,f,c):
         self.t+=1
-        self.pulled[self.gamma] += 1
-        self.f_t[self.gamma]+=f
-        self.c_t[self.gamma]+=c
+        self.pulled[self.i] += 1
+        self.f_t[self.i]+=f
+        self.c_t[self.i]+=c
         #self.rho=self.B/(self.T-self.t+1)
-        self.B-=c
-
-class gpucblike:
-    #B: budget, T: steps, lr: learning rate
-    def __init__(self,B,T,lr,my_val,discretization=100,scale=2.0):
-        self.prices=np.linspace(10,20,discretization)
-        self.act_prices=np.linspace(0,my_val,discretization)
-        self.B=B
-        self.T=T
-        self.lr=lr
-        self.f_t=RBFGaussianProcess(scale=scale).fit()
-        self.c_t=RBFGaussianProcess(scale=scale).fit()
-        self.mu_f = np.zeros(discretization)
-        self.sigma_f = np.zeros(discretization)
-        self.mu_c = np.zeros(discretization)
-        self.sigma_c = np.zeros(discretization)
-        self.rho=self.B/self.T
-        self.t=0
-        self.gamma=0
-
-    def bid(self):
-        if self.B<1:
-            self.gamma=0
-        else:
-            self.mu_c,self.sigma_c=self.c_t.predict(self.prices)
-            self.mu_f,self.sigma_f=self.f_t.predict(self.prices)
-            f_ucbs = self.mu_f+0.2*np.sqrt(2*np.log(self.T)*self.sigma_f)
-            c_ucbs = self.mu_c-np.sqrt(2*np.log(self.T)*self.sigma_c)
-            f_ucbs[c_ucbs>self.rho]=0
-            self.gamma=np.argmax(f_ucbs)
-        return self.act_prices[self.gamma]
-    
-    def update(self,f,c):
-        self.t+=1
-        self.f_t.fit(self.prices[self.gamma],f)
-        self.c_t.fit(self.prices[self.gamma],c)
-        #self.rho=self.B/(self.T-self.t)
         self.B-=c

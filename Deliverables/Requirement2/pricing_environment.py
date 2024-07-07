@@ -13,13 +13,5 @@ class PricingEnvironment():
         l_t = np.array([(1-(price-self.cost)*rates(price)) for price in self.prices])
         return l_t , r_t , d_t
     
-class AdversarialExpertEnvironment():
-    def __init__(self, loss_sequence):
-        self.loss_sequence = loss_sequence
-        self.t = 0
 
-    def round(self): # we do not need to receive a specific arm
-        l_t = self.loss_sequence[self.t, :]
-        self.t+=1 
-        return l_t
     

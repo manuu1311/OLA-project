@@ -61,5 +61,4 @@ class ucblike:
         self.pulled[self.i] += 1
         self.f_t[self.i]+=f
         self.c_t[self.i]+=c
-        #self.rho=self.B/(self.T-self.t+1)
         self.B-=c

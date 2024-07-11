@@ -11,7 +11,7 @@ class Auction:
         pass
 
     def round(self, bids):
-        winners, values = self.get_winners(bids) # allocation mechanism!
+        winners, values = self.get_winners(bids) 
         payments_per_click = self.get_payments_per_click(winners, values, bids)
         return winners, payments_per_click
 
